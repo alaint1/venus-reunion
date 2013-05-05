@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:security="http://www.springframework.org/security/tags"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition template="/pages/vorgang.xhtml">
+
+		<ui:define name="_title">
+			<sr:title value="E-Mail-Funktionen" />
+		</ui:define>
+
+		<ui:define name="_form">
+			<sr:helpLink
+				ref="Kaprios/Administration Kaprios/AdminiSteuerungstool.htm#Admini_Steuerungstool_EMailFunktionen" />
+
+			<t:panelGrid columns="1">
+
+				<sr:checkboxField id="mailEnabledManuell"
+					value="#{parameterHolder['ctrl.parameter.mailManuellAktiviert'].booleanValue}"
+					label="Manuelle E-Mail-Funktion aktivieren">
+					<a4j:support event="onclick" action="#{parameterHolder.save}" />
+				</sr:checkboxField>
+				
+				<sr:checkboxField id="mailEnabledQualifizierung"
+					value="#{parameterHolder['ctrl.parameter.mailQualifizierungAktiviert'].booleanValue}"
+					label="E-Mail-Funktion Qualifizierung aktivieren">
+					<a4j:support event="onclick" action="#{parameterHolder.save}" />
+				</sr:checkboxField>
+
+			</t:panelGrid>
+
+		</ui:define>
+
+	</ui:composition>
+
+</jsp:root>
+

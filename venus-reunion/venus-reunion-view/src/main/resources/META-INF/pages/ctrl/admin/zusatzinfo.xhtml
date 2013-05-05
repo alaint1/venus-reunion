@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:security="http://www.springframework.org/security/tags"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition template="/pages/vorgang.xhtml">
+
+<!-- 		<ui:define name="_title"> -->
+<!-- 			<sr:title value="Zusatzinfoelemente" /> -->
+<!-- 		</ui:define> -->
+
+		<ui:define name="_form">
+			<sr:helpLink ref="Kaprios/Administration Kaprios/AdminiSteuerungstool.htm#Admini_Steuerungstool_Zusatzinfo" />
+
+			<h:panelGrid columns="2">
+
+				<sr:textField id="bezeichnung"
+					value="#{controller.value.bezeichnung}" size="30" maxlength="30"
+					label="Bezeichnung" />
+
+				<sr:comboboxField id="prozess" value="#{controller.value.prozess}"
+					items="#{controller.prozessListe}" emptyItem="true"
+					label="Prozess" />
+					
+
+			</h:panelGrid>
+
+			<sr:dataTable id="data" value="#{controller.value.infoelemente}" var="bean" deleteController="#{admCtrlInfoelementController}"
+				deleteMessage="Infoelement löschen?" dataScrollerInfo="true">
+
+				<t:column id="column_open" headerstyle="width:18px;">
+					<sr:iconActionOpen controller="#{admCtrlInfoelementController}">
+						<f:setPropertyActionListener target="#{admCtrlInfoelementController.value}"
+							value="#{bean}" />
+					</sr:iconActionOpen>
+				</t:column>
+
+				<t:column>
+					<f:facet name="header">
+						<h:outputText value="Bezeichnung" />
+					</f:facet>
+					<t:commandLink id="column_open_link" action="#{admCtrlInfoelementController.open}">
+						<f:setPropertyActionListener target="#{admCtrlInfoelementController.value}"
+							value="#{bean}" />
+						<h:outputText value="#{bean.bezeichnung}" />
+					</t:commandLink>
+				</t:column>
+
+				<t:column headerstyle="width:18px;">
+					<sr:iconActionRemove>
+						<f:setPropertyActionListener target="#{admCtrlInfoelementController.value}"
+							value="#{bean}" />
+					</sr:iconActionRemove>
+				</t:column>
+
+			</sr:dataTable>
+
+			<t:div styleClass="space-small" />
+
+			<t:div styleClass="_btn">
+				<t:commandButton id="createInfoelement"
+					disabled="#{workflow.readonly}" styleClass="_button btn_new"
+					value="NEU" action="#{controller.createInfoelement}">
+				</t:commandButton>
+			</t:div>
+
+		</ui:define>
+	</ui:composition>
+
+</jsp:root>
+

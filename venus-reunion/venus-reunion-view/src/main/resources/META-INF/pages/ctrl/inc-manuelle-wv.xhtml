@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:security="http://www.springframework.org/security/tags"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition>
+
+
+		<t:div id="akt_wv">
+			<t:div rendered="#{controller.isShowWvFields()}">
+
+				<t:fieldset legend="Wiedervorlage">
+
+					<h:panelGrid columns="3">
+						<sr:dateField id="faelligAm" label="Fällig am"
+							value="#{controller.value.aufgabe.datumSoll}" required="true"
+							reRender="action_wv_aufheben,wv_grund" compute="true" />
+
+						<t:div styleClass="_btn">
+							<h:commandButton id="action_wv_speichern" value="WV SPEICHERN"
+								styleClass="_button btn_save" style="width:10em;"
+								action="#{controller.saveWv()}">
+							</h:commandButton>
+						</t:div>
+
+						<sr:mdCommandButton id="action_wv_aufheben"
+							buttonStyleClass="_button btn_abort" buttonStyle="width:10em;"
+							value="WV AUFHEBEN" disabled="#{controller.isWvFaellig()}"
+							mbtitle="WV aufheben?"
+							mbmessage="Soll die Wiedervorlage tatsächlich aufgehoben werden?"
+							backingbean="#{ctrlVorgangController}" binding="wvAufhebenButton"
+							action="resetWv" mblabel="OK" mbcancellabel="ABBRECHEN" />
+					</h:panelGrid>
+
+					<t:div id="wv_grund">
+						<sr:textField id="faelligGrund" label="Grund der Wiedervorlage"
+							value="#{controller.value.aufgabe.wvGrund}" maxlength="80"
+							size="50" required="true" compute="true" />
+					</t:div>
+
+					<sr:textAreaField id="faelligZusatzinfo" label="Zusatzinfo"
+						style="width:100%;"
+						value="#{controller.value.aufgabe.beschreibung}" maxlength="2000"
+						rows="5" />
+
+				</t:fieldset>
+
+			</t:div>
+		</t:div>
+
+
+	</ui:composition>
+
+</jsp:root>

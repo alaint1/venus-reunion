@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:security="http://www.springframework.org/security/tags"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition template="/pages/vorgang.xhtml">
+
+		<ui:define name="_title">
+			<sr:title value="Unterlage" />
+		</ui:define>
+
+		<ui:define name="_form">
+			<sr:helpLink ref="Kaprios/Administration Kaprios/AdminiSteuerungstool.htm#Admini_Steuerungstool_Unterlage" />
+
+			<h:panelGrid columns="1">
+
+				<sr:textField id="bezeichnung"
+					value="#{controller.value.bezeichnung}" size="120" maxlength="200"
+					label="Unterlagenbezeichnung" />
+					
+				<sr:comboboxField id="gruppe" value="#{controller.value.gruppe}"
+					emptyItem="true" disabled="true"
+					items="#{admCtrlUnterlagengruppenItemGenerator.all}"
+					converter="#{admCtrlUnterlagengruppenItemGenerator.converterAll}"
+					label="Unterlagengruppe" />
+
+			</h:panelGrid>
+
+			<t:panelGrid columns="3">
+
+
+				<sr:comboboxField id="zweck" value="#{controller.value.zweck}"
+					required="true"
+					items="#{enumType['de.subito.sunrise.model.control.admin.UnterlagenZweck']}"
+					label="Zweck" inputStyle="width:25em;" />
+					
+				<sr:comboboxField id="default_status"
+					emptyItem="true"
+					value="#{controller.value.defaultStatus}"
+					label="Defaultstatus">
+					<f:selectItem itemValue="BEIGEFUEGT" itemLabel="Beigefügt" />
+					<f:selectItem itemValue="ANGEFORDERT" itemLabel="Angefordert" />
+					<f:selectItem itemValue="NACHZUREICHEN" itemLabel="Nachzureichen" />
+					<f:selectItem itemValue="IN_AKTE" itemLabel="Bereits in Akte" />
+					<f:selectItem itemValue="VERZICHT" itemLabel="Verzicht" />
+				</sr:comboboxField>					
+
+				<sr:checkboxField id="verzicht"
+					value="#{controller.value.verzichtMoeglich}"
+					label="Verzicht möglich?" />
+
+			</t:panelGrid>
+
+			<t:div styleClass="space" />
+
+			<t:fieldset id="bedingungen" legend="Allgemeine Bedingungen">
+
+				<t:panelGrid columns="2">
+
+					<sr:comboboxField id="kundenart"
+						value="#{controller.value.kundenart}"
+						items="#{enumType['de.subito.sunrise.model.control.admin.Kundenart']}"
+						label="Kundenart" />
+
+					<sr:checkboxField id="neukunde"
+						value="#{controller.value.neukunde}" label="Neukunde" />
+
+				</t:panelGrid>
+
+				<sr:comboboxField id="finanzierungsart"
+					value="#{controller.value.finanzierungsart}"
+					items="#{enumType['de.subito.sunrise.model.control.admin.Finanzierungsart']}"
+					label="Finanzierungsart" />
+
+				<sr:comboboxField id="produkt" value="#{controller.value.produkt}"
+					items="#{enumType['de.subito.sunrise.model.control.admin.Produkt']}"
+					label="Produkt" />
+
+				<sr:moneyField id="obligo" value="#{controller.value.obligo}"
+					label="Obligo" />
+
+			</t:fieldset>
+			
+			<t:fieldset id="sicherheiten" legend="Bedingungen / Sicherheiten">
+
+				<h:panelGrid columns="6" cellspacing="6" cellpadding="0">
+
+					<sr:checkboxField id="grundschulden"
+						value="#{pc.value.neueGrundschulden}" label="Neue Grundschulden" />
+						
+					<sr:checkboxField id="bestehende_grundschuld"
+						value="#{pc.value.bestehendeGrundschulden}" label="Bestehende Grundschulden" />
+						
+					<sr:checkboxField id="verpfaendung"
+						value="#{pc.value.verpfaendung}" label="Verpfändung" />
+
+					<sr:checkboxField id="abtretung" value="#{pc.value.abtretung}"
+						label="Abtretung" />
+						
+					<sr:checkboxField id="buergschaft" value="#{pc.value.buergschaft}"
+						label="Bürgschaft" />
+						
+					<sr:checkboxField id="sue" value="#{pc.value.sue}" label="SÜ" />
+
+				</h:panelGrid>				
+				
+				<h:panelGrid columns="3" cellspacing="6" cellpadding="0">
+					
+					<sr:checkboxField id="objekt_bekannt"
+						value="#{pc.value.objektUnbekannt}" label="Beleihungsobjekt unbekannt" />
+						
+					<sr:checkboxField id="bestehende_grundschuld_fremd"
+						value="#{pc.value.bestehendeGrundschuldenFremd}"
+						label="Übernahme bestehender Grundschulden vom Fremd-KI" />
+						
+					<sr:checkboxField id="blanko"
+						value="#{pc.value.blanko}" label="Blanko" />
+													
+				</h:panelGrid>
+
+			</t:fieldset>
+
+
+		</ui:define>
+	</ui:composition>
+
+</jsp:root>
+

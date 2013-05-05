@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition>
+
+
+		<sr:helpLink
+			ref="Kaprios/Bearbeitung/Vorgangsinfo.htm#Vorgangsinfo_Auszahlungsinfo" />
+
+		<c:set var="tc" value="#{ctrlVorgangController}" />
+
+		<c:forEach items="#{tc.produkte}" var="prod" varStatus="rowProd">
+
+			<c:if test="#{!tc.auszahlungsinfos(prod).isEmpty()}">
+
+				<t:fieldset legend="#{tc.textOfProdukt(prod)}">
+
+					<c:forEach items="#{tc.auszahlungsinfos(prod)}" var="ausInfo"
+						varStatus="rowKto">
+
+						<t:div id="gruppe_darlehenskonto_#{rowProd.index}_#{rowKto.index}">
+
+							<h:panelGrid columns="5">
+
+								<t:div id="status_img_#{rowProd.index}_#{rowKto.index}">
+									<t:graphicImage title="nicht auszahlungsreif"
+										rendered="#{!ausInfo.auszahlungsreif}"
+										url="/weblets/icons/status_red.gif"
+										alt="nicht auszahlungsreif" />
+									<t:graphicImage title="auszahlungsreif"
+										rendered="#{ausInfo.auszahlungsreif}"
+										url="/weblets/icons/status_green.gif" alt="auszahlungsreif" />
+								</t:div>
+
+								<sr:integerField id="konto_nr_#{rowProd.index}_#{rowKto.index}"
+									label="Kto. Nr." value="#{ausInfo.darlehenskonto.kontonummer}" />
+
+								<sr:moneyField id="bew_betrag_#{rowProd.index}_#{rowKto.index}"
+									label="Bew. Betrag"
+									value="#{ausInfo.darlehenskonto.kreditbetrag}" />
+
+								<sr:checkboxField
+									id="auszahlungsreif_#{rowProd.index}_#{rowKto.index}"
+									label="auszahlungsreif" value="#{ausInfo.auszahlungsreif}"
+									reRender="gruppe_darlehenskonto_#{rowProd.index}_#{rowKto.index},gruppe_teilauszahlung_#{rowProd.index}_#{rowKto.index}" />
+
+								<h:commandButton
+									id="btn_teilauszahlung_#{rowProd.index}_#{rowKto.index}"
+									value="NEUE TEILAUSZAHLUNG" styleClass="_button btn_new"
+									style="width:14em;"
+									action="#{tc.createTeilauszahlung(ausInfo)}"
+									disabled="#{workflow.readonly or !ausInfo.auszahlungsreif}" />
+
+							</h:panelGrid>
+
+						</t:div>
+
+						<t:div id="gruppe_teilauszahlung_#{rowProd.index}_#{rowKto.index}">
+
+							<c:forEach items="#{tc.teilauszahlungen(ausInfo)}" var="teilAus"
+								varStatus="rowTeil">
+
+								<h:panelGrid columns="6">
+
+									<sr:moneyField
+										id="betrag_#{rowProd.index}_#{rowKto.index}_#{rowTeil.index}"
+										label="Betrag" value="#{teilAus.betrag}" />
+
+									<sr:dateField
+										id="datum_#{rowProd.index}_#{rowKto.index}_#{rowTeil.index}"
+										label="Datum" value="#{teilAus.datum}" style="width:9em;" />
+
+									<sr:textField
+										id="ausfuehrungDurch_#{rowProd.index}_#{rowKto.index}_#{rowTeil.index}"
+										value="#{tc.teilauszahlungAusgefuehrtDurch(teilAus)}"
+										label="Ausführung" size="30" disabled="true" />
+
+									<h:commandButton
+										id="btn_ausfuehrung_#{rowProd.index}_#{rowKto.index}_#{rowTeil.index}"
+										value="AUSFÜHRUNG" styleClass="_button btn_next"
+										style="width:10em;"
+										action="#{tc.teilauszahlungAusfuehren(teilAus)}"
+										disabled="#{workflow.readonly or !tc.isAusfuehrungTeilzahlungMoeglich(ausInfo,teilAus)}" />
+
+									<sr:textField
+										id="kontrolleDurch_#{rowProd.index}_#{rowKto.index}_#{rowTeil.index}"
+										value="#{tc.teilauszahlungKontrolliertDurch(teilAus)}"
+										label="Kontrolle" size="30" disabled="true" />
+
+									<h:commandButton
+										id="btn_kontrolle_#{rowProd.index}_#{rowKto.index}_#{rowTeil.index}"
+										value="KONTROLLE" styleClass="_button btn_next"
+										style="width:10em;"
+										action="#{tc.teilauszahlungKontrollieren(teilAus)}"
+										disabled="#{workflow.readonly or !tc.isKontrolleTeilzahlungMoeglich(ausInfo,teilAus)}" />
+
+								</h:panelGrid>
+
+							</c:forEach>
+
+						</t:div>
+
+					</c:forEach>
+
+				</t:fieldset>
+
+			</c:if>
+
+		</c:forEach>
+
+	</ui:composition>
+
+</jsp:root>

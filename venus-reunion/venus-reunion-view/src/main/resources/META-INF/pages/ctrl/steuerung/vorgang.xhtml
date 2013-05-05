@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:security="http://www.springframework.org/security/tags"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition>
+
+		<sr:helpLink
+			ref="Kaprios/Bearbeitung/Vorgangsinfo.htm#Vorgangsinfo_Vorgang" />
+
+		<h:panelGrid columns="2">
+			<sr:textField id="vnr" value="#{pc.value.id}" size="15"
+				disabled="true" label="Vorgangs-Nr." />
+
+			<sr:textField id="parentVorgang" value="#{pc.value.parentVorgang.id}"
+				size="15" disabled="true" label="aufrufender Vorgang" />
+		</h:panelGrid>
+
+		<h:panelGrid columns="4">
+
+			<sr:textField id="extvnr" value="#{pc.value.externeVorgangsNr}"
+				size="15" label="Externe-Vorgangs-Nr."
+				disabled="#{ !empty workflow.value.transferInfo.getHostId('iibVorgangId')}" />
+
+			<t:div styleClass="_btn">
+
+				<h:commandButton id="vorgangHost" value="OSPK-IMPORT"
+					styleClass="_button btn_import"
+					actionListener="#{ctrlDynsViewService.process}"
+					action="#{controller.importVorgangHost(pc.value)}"
+					style="width:14em" reRender="fs_ko"
+					disabled="#{ !empty workflow.value.transferInfo.getHostId('iibVorgangId') or workflow.readonly}" />
+
+			</t:div>
+
+			<sr:textField id="vbez" value="#{pc.value.vorgangsbezeichnung}"
+				size="40" label="Vorgangsbezeichnung"
+				disabled="#{ !empty workflow.value.transferInfo.getHostId('iibVorgangId')}" />
+
+
+			<sr:comboboxField id="aktBerater" emptyItem="true"
+				value="#{pc.value.berater}"
+				items="#{userItemsRole.getItems('base.roleId.beratung')}"
+				label="Aktueller Berater" />
+
+		</h:panelGrid>
+
+		<h:panelGrid columns="4">
+
+			<sr:comboboxField id="kompetenztraeger" emptyItem="true"
+				value="#{pc.value.kompetenztraeger}"
+				items="#{kompetenztraegerItemGenerator.all}"
+				converter="#{kompetenztraegerItemGenerator.converterAll}"
+				label="Kompetenzträger" />
+
+			<sr:textField id="vart" value="#{pc.value.vorgArt}" size="40"
+				label="Vorgangsart"
+				disabled="#{ !empty workflow.value.getTransferInfo().getHostId('iibVorgangId')}" />
+
+			<sr:textField id="vuart" value="#{pc.value.vorgangsunterart}"
+				size="40" label="Vorgangsunterart"
+				disabled="#{ !empty workflow.value.getTransferInfo().getHostId('iibVorgangId')}" />
+
+			<sr:comboboxField id="bearb" emptyItem="true"
+				value="#{pc.value.aufgabe.sachbearbeiter}"
+				items="#{userItemGenerator.all}" label="Aktueller Bearbeiter"
+				disabled="true" />
+
+		</h:panelGrid>
+
+		<t:div styleClass="space" />
+
+		<h:panelGrid columns="2">
+
+			<sr:textField id="ast" value="#{pc.value.antragstellerName}"
+				size="60" label="Antragsteller" />
+
+			<sr:textField id="pers" value="#{pc.value.personenNr}" size="10"
+				label="Pers.-Nr." />
+
+		</h:panelGrid>
+		<h:panelGrid columns="3">
+
+			<sr:textField id="vorh_art" value="#{pc.value.vorhabensart}"
+				size="40" label="Vorhabensart"
+				disabled="#{ !empty workflow.value.getTransferInfo().getHostId('iibVorgangId')}" />
+
+			<sr:textField id="vorh_zweck" value="#{pc.value.vorhabenszweck}"
+				size="40" label="Vorhabenszweck"
+				disabled="#{ !empty workflow.value.getTransferInfo().getHostId('iibVorgangId')}" />
+
+			<sr:textField id="vorh_bez" value="#{pc.value.vorhabensbezeichnung}"
+				size="60" label="Vorhabensbezeichnung"
+				disabled="#{ !empty workflow.value.getTransferInfo().getHostId('iibVorgangId')}" />
+
+		</h:panelGrid>
+
+		<t:div styleClass="space" />
+
+		<h:panelGrid columns="3">
+
+			<h:panelGrid>
+				<t:fieldset id="kundenart" legend="Kundenart">
+
+					<t:selectOneRadio id="kd" style="border:0px;"
+						disabled="#{workflow.readonly}" value="#{pc.value.kundenart}"
+						layout="spread">
+						<f:selectItems
+							value="#{enumType['de.subito.sunrise.model.control.admin.Kundenart']}" />
+					</t:selectOneRadio>
+
+					<h:panelGrid columns="2">
+						<t:radio for="kd" index="1" />
+						<t:radio for="kd" index="2" />
+					</h:panelGrid>
+
+				</t:fieldset>
+
+			</h:panelGrid>
+
+			<h:panelGrid>
+				<t:div styleClass="space" />
+				<sr:checkboxField id="vneukunde" value="#{pc.value.neukunde}"
+					label="Neukunde" />
+			</h:panelGrid>
+
+			<h:panelGrid>
+				<t:div styleClass="space" />
+				<sr:comboboxField id="versand_art"
+					value="#{pc.value.vertragsversandart}"
+					items="#{enumType['de.subito.sunrise.model.control.Vertragsversandart']}"
+					label="Vertragsversand">
+				</sr:comboboxField>
+			</h:panelGrid>
+		</h:panelGrid>
+
+
+		<t:div styleClass="space" />
+
+		<h:panelGrid id="sektion" cellspacing="0" cellpadding="0"
+			style="width:100%;">
+
+			<c:if test="#{pc.value.prozess.prozessArt == 'NEU'}">
+				<ui:include src="inc-neugeschaeft.xhtml" />
+			</c:if>
+
+			<c:if test="#{pc.value.prozess.prozessArt == 'SONST'}">
+				<ui:include src="inc-sonstigesgeschaeft.xhtml" />
+			</c:if>
+
+		</h:panelGrid>
+
+		<ui:include src="inc-uebernahme.xhtml" />
+
+	</ui:composition>
+
+</jsp:root>
+

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+
+	<!-- Steuerungstool -->
+	<phase id="ctrl-steuerungsprozess" name="label.process.steuerungsprozess"
+		page="redirect:core/aufgaben" bean="com.softcam. venus.model.prozess.Vorgang"
+		role="ROLE_CTRL" controller="ctrlVorgangController" module="Steuerungstool">
+		<phase id="ctrl-steuerung" name="label.menu.process.steuerung"
+			bean="com.softcam. venus.model.control.CtrlVorgang" page="ctrl/steuerung"
+			role="ROLE_CTRL">
+
+			<phase id="ctrl-email" name="label.menu.process.email" page="ctrl/email"
+				controller="ctrlVorgangEmailController" private="true">
+				<tab page="email" />
+			</phase>
+
+		</phase>
+	</phase>
+</application>

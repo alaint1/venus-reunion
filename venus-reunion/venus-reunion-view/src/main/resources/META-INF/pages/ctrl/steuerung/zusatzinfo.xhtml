@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition>
+
+		<sr:helpLink
+			ref="Kaprios/Bearbeitung/Vorgangsinfo.htm#Vorgangsinfo_Zusatzinfo" />
+
+		<c:set var="tc" value="#{ctrlZusatzinfoController}" />
+
+		<c:if test="#{tc.value == null}">
+
+			<t:div styleClass="warning">
+				<h:outputFormat
+					value="Bislang wurden für diese Prozessart keine Zusatzinfos administriert. Bitte wenden Sie sich an Ihren Administrator.">
+				</h:outputFormat>
+			</t:div>
+
+		</c:if>
+
+		<c:if test="#{tc.value != null}">
+
+			<h:panelGrid columns="2" style="width:100%;">
+
+				<c:forEach items="#{tc.value.infolemente}" var="elem">
+
+					<h:panelGrid columns="1">
+
+						<h:outputText value="#{elem.bezeichnung}" />
+
+					</h:panelGrid>
+
+					<h:panelGrid columns="1">
+
+						<c:if test="#{elem.typ == 'DATE'}">
+							<sr:dateField id="date_#{elem.id}" value="#{elem.datum}" />
+						</c:if>
+
+						<c:if test="#{elem.typ == 'RADIOBUTTON'}">
+							<h:selectOneRadio id="rb_#{elem.id}" value="#{elem.choice}"
+								layout="pageDirection" converter="ctrlInfoMerkmalConverter">
+								<c:forEach items="#{elem.merkmale}" var="item">
+									<f:selectItem itemValue="#{item}" itemLabel="#{item.merkmal}" />
+								</c:forEach>
+							</h:selectOneRadio>
+						</c:if>
+
+						<c:if test="#{elem.typ == 'CHECKBOX'}">
+
+							<c:forEach items="#{elem.merkmale}" var="item">
+								<sr:checkboxField id="cbx_#{item.id}" value="#{item.checked}"
+									label="#{item.merkmal}" />
+							</c:forEach>
+
+						</c:if>
+
+						<c:if test="#{elem.typ == 'TEXT_KURZ'}">
+
+							<sr:textField id="txt_kurz#{elem.id}" value="#{elem.wert}"
+								size="30" maxlength="30" />
+
+						</c:if>
+
+						<c:if test="#{elem.typ == 'TEXT_LANG'}">
+
+							<sr:textField id="txt_lang#{elem.id}" value="#{elem.wert}"
+								size="75" maxlength="75" />
+
+						</c:if>
+
+						<c:if test="#{elem.typ == 'INTEGER'}">
+
+							<sr:integerField id="int_#{elem.id}" size="14"
+								value="#{elem.wert}" maxlength="14" />
+
+						</c:if>
+
+						<c:if test="#{elem.typ == 'TEXT_MULTILINE'}">
+							<t:div style="width:560px;">
+								<sr:textAreaField id="txt_multi#{elem.id}" value="#{elem.wert}"
+									rows="4"/>
+							</t:div>
+						</c:if>
+
+						<c:if test="#{elem.typ == 'COMBOBOX'}">
+
+							<sr:comboboxField id="cbb_#{elem.id}" value="#{elem.merkmal}"
+								emptyItem="true"
+								items="#{ctrlInfoelementMerkmalItemGenerator.getInfoelementMerkmal(elem)}"
+								converter="#{ctrlInfoelementMerkmalItemGenerator.converterAll}" />
+
+						</c:if>
+
+					</h:panelGrid>
+
+				</c:forEach>
+
+			</h:panelGrid>
+
+		</c:if>
+
+	</ui:composition>
+
+</jsp:root>
+

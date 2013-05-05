@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+
+	<phase id="ctrl-vorgangsinfo" name="label.control.menu.vorgangsinfo" page="ctrl/vorgangsinfo"
+		module="Steuerungstool" controller="ctrlVorgangsinfoController"
+		role="ROLE_CTRL" >
+	
+		<phase id="ctrl-vorgangsinfo-checkliste" name="label.control.menu.vorgangsinfo.checkliste"
+			bean="com.softcam.venus.model.control.CtrlVorgang" readonly="#{true}"
+			page="ctrl/vorgangsinfo-checkliste" />
+	</phase>
+</application>

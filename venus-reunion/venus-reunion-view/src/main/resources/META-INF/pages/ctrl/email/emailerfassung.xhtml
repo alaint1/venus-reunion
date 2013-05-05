@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:security="http://www.springframework.org/security/tags"
+	xmlns:sr="http://subito.de/sunrise"
+	xmlns:thb="http://subito.de/sunrise/thb">
+
+	<ui:composition>
+		<sr:helpLink ref="" />
+
+		<h:panelGrid style="width:100%;" columnspacing="0" columnpadding="0"
+			id="msgGrid">
+			<t:div styleClass="Info"
+				rendered="#{controller.value.sentAt != null}" style="width:690px;"
+				id="sentAt">
+				<h:outputText value="E-Mail wurde versandt #{controller.sentAt}" />
+			</t:div>
+		</h:panelGrid>
+
+		<h:panelGrid columns="2">
+
+			<sr:textField id="empfaenger" value="#{controller.value.mailAddress}"
+				maxlength="200" inputStyle="width:500px;" label="Empfänger"
+				readonly="never" required="true" reRender="sendDiv" />
+
+			<sr:checkboxField id="cc" value="#{controller.carbonCopyToSender}"
+				label="Kopie an Versender" readonly="never" />
+
+			<sr:comboboxField id="email_adressen" label="Empfängerauswahl"
+				value="#{controller.email}" items="#{controller.emailAdressen}"
+				emptyItem="true">
+				<a4j:support event="onchange" reRender="empfaenger"
+					action="#{controller.emailToEmpfaenger}" />
+			</sr:comboboxField>
+
+		</h:panelGrid>
+
+		<h:panelGrid columns="1">
+
+			<sr:textField id="betreff" value="#{controller.value.mailSubject}"
+				maxlength="300" inputStyle="width:693px;" label="Betreff"
+				reRender="sendDiv" required="true" readonly="never">
+				<a4j:support event="onkeyup" ignoreDupResponses="true"
+					requestDelay="100" reRender="sendDiv" />
+			</sr:textField>
+
+			<rich:editor id="inhalt" width="700" theme="advanced" height="400"
+				value="#{controller.value.mailBody}">
+				<f:param name="forced_root_block" value="false" />
+				<f:param name="force_br_newlines" value="true" />
+				<f:param name="force_p_newlines" value="false" />
+				<f:param name="entity_encoding" value="raw" />
+				<a4j:support event="onkeyup" ignoreDupResponses="true"
+					requestDelay="200" reRender="sendDiv" />
+				<a4j:support event="onchange" ignoreDupResponses="true"
+					requestDelay="200" reRender="sendDiv" />
+			</rich:editor>
+
+			<sr:outputLabel for="inhalt" value="Inhalt" required="true" />
+
+		</h:panelGrid>
+
+		<t:div id="schaltflaechen">
+
+			<t:div styleClass="_btn" style="text-align:right" id="sendDiv">
+				<t:commandButton id="cancel_action" styleClass="_button btn_send"
+					action="#{controller.send}" value="SENDEN"
+					disabled="#{!controller.sendingPossible}" />
+			</t:div>
+
+		</t:div>
+	</ui:composition>
+</jsp:root>
+

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:security="http://www.springframework.org/security/tags"
+	xmlns:sr="http://subito.de/sunrise"
+	xmlns:thb="http://subito.de/sunrise/thb">
+
+	<ui:composition template="/pages/vorgang.xhtml">
+
+		<ui:define name="_form">	
+		
+			<t:div id="email_tabs">
+	
+				<sr:panelTabbedPane id="tabs_email">
+					<t:panelTab id="tab_emailversand" label="E-Mailversand">
+						<ui:include src="email/emailerfassung.xhtml" />
+					</t:panelTab>
+				</sr:panelTabbedPane>
+				
+			</t:div>
+		
+		</ui:define>
+
+	</ui:composition>
+
+</jsp:root>
+

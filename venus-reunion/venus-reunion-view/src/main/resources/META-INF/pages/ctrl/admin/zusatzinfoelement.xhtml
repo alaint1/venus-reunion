@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:security="http://www.springframework.org/security/tags"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition template="/pages/vorgang.xhtml">
+
+		<ui:define name="_title">
+			<sr:title value="Infoelement" />
+		</ui:define>
+
+		<ui:define name="_form">
+			<sr:helpLink
+				ref="Kaprios/Administration Kaprios/AdminiSteuerungstool.htm#Admini_Steuerungstool_Zusatzinfoelemente" />
+
+			<h:panelGrid columns="2">
+
+				<sr:textField id="bezeichnung"
+					value="#{controller.value.bezeichnung}" size="30" maxlength="30"
+					label="Bezeichnung" />
+
+				<sr:comboboxField id="typ" value="#{controller.value.typ}"
+					reRender="merkmale"
+					items="#{enumType['de.subito.sunrise.model.control.CtrlInfoelementTyp']}"
+					label="Typ" />
+
+			</h:panelGrid>
+
+			<t:div id="merkmale">
+				<c:if
+					test="#{controller.value.typ == 'CHECKBOX' or controller.value.typ == 'RADIOBUTTON' or controller.value.typ == 'COMBOBOX'}">
+
+					<t:fieldset legend="Ausprägungen">
+
+						<sr:dataTable id="data" value="#{controller.value.merkmale}"
+							var="bean" deleteAction="removeMerkmal"
+							deleteMessage="Merkmal löschen?" dataScrollerInfo="true">
+							
+							<t:column headerstyle="width:18px;">
+								<sr:iconActionOpenClose target="#{controller.merkmal}"
+									alt="Öffnen/Schließen" title="Infoelement Öffnen/Schließen"
+									value="#{bean}" reRender="merkmale" />
+							</t:column>
+
+							<t:column>
+								<f:facet name="header">
+									<h:outputText value="Bezeichnung" />
+								</f:facet>
+								<t:commandLink id="column_open_link">
+									<f:setPropertyActionListener target="#{controller.merkmal}"
+										value="#{bean}" />
+									<h:outputText value="#{bean.merkmal}" />
+								</t:commandLink>
+							</t:column>
+
+							<t:column headerstyle="width:18px;">
+								<sr:iconActionRemove>
+									<f:setPropertyActionListener target="#{controller.merkmal}"
+										value="#{bean}" />
+								</sr:iconActionRemove>
+							</t:column>
+						</sr:dataTable>
+
+						<t:div styleClass="space-small" />
+
+						<t:div styleClass="_btn">
+							<h:commandButton id="createMerkmal"
+								disabled="#{workflow.readonly}" styleClass="_button btn_new"
+								value="NEU" action="#{controller.createMerkmal}">
+							</h:commandButton>
+						</t:div>
+
+						<t:div styleClass="space-small" />
+
+						<sr:textField id="merk_bez"
+							rendered="#{controller.merkmal != null}"
+							value="#{controller.merkmal.merkmal}" size="80" maxlength="80"
+							label="Merkmal" />
+
+					</t:fieldset>
+
+				</c:if>
+			</t:div>
+		</ui:define>
+	</ui:composition>
+
+</jsp:root>
+

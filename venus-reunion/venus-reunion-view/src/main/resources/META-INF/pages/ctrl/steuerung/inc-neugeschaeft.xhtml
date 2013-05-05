@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition>
+
+		<h:panelGrid>
+
+			<h:panelGrid columns="2" cellspacing="0" cellpadding="0"
+				style="width:100%;">
+
+				<t:fieldset legend="Produkte">
+					<h:panelGrid columns="3" columnClasses="align_bottom">
+						<t:div />
+						<sr:outputLabel for="" value="Anzahl" />
+						<sr:outputLabel for="" value="Betrag" />
+
+						<sr:outputLabel for="spkMittel" value="Spk. Mittel" />
+						<sr:integerField id="spkMittel" value="#{pc.value.spkAnzahl}"
+							size="3" reRender="fin_bedarf,obligo_neu,btn_auszahlungsinfo"
+							disabled="#{workflow.readonly or !pc.value.auszahlungsinfos.isEmpty()}" />
+						<sr:moneyField id="spkBetrag" value="#{pc.value.spkBetrag}"
+							reRender="fin_bedarf,obligo_neu" />
+
+						<sr:outputLabel for="lbsMittel" value="LBS" />
+						<sr:integerField id="lbsMittel" value="#{pc.value.lbsAnzahl}"
+							size="3" reRender="fin_bedarf,obligo_neu,btn_auszahlungsinfo"
+							disabled="#{workflow.readonly or !pc.value.auszahlungsinfos.isEmpty()}" />
+						<sr:moneyField id="lbsBetrag" value="#{pc.value.lbsBetrag}"
+							reRender="fin_bedarf,obligo_neu" />
+
+						<sr:outputLabel for="omiMittel" value="ÖMI" />
+						<sr:integerField id="omiMittel" value="#{pc.value.omiAnzahl}"
+							size="3" reRender="fin_bedarf,obligo_neu,btn_auszahlungsinfo"
+							disabled="#{workflow.readonly or !pc.value.auszahlungsinfos.isEmpty()}" />
+						<sr:moneyField id="omiBetrag" value="#{pc.value.omiBetrag}"
+							reRender="fin_bedarf,obligo_neu" />
+
+						<sr:outputLabel for="leasMittel" value="Leasing" />
+						<sr:integerField id="leasMittel" value="#{pc.value.leasAnzahl}"
+							size="3" reRender="fin_bedarf,obligo_neu,btn_auszahlungsinfo"
+							disabled="#{workflow.readonly or !pc.value.auszahlungsinfos.isEmpty()}" />
+						<sr:moneyField id="leasBetrag" value="#{pc.value.leasBetrag}"
+							reRender="fin_bedarf,obligo_neu" />
+
+					</h:panelGrid>
+				</t:fieldset>
+
+				<t:fieldset legend="Gesamtobligo">
+					<h:panelGrid>
+						<sr:moneyField id="obligo_alt" value="#{pc.value.gesamtobligo}"
+							label="Gesamtobligo alt" reRender="obligo_neu" />
+						<sr:moneyField id="fin_bedarf"
+							value="#{pc.value.finanzierungsbedarf}"
+							label="Finanzierungsbedarf" readonly="true" />
+						<sr:moneyField id="obligo_neu" value="#{pc.value.gesamtobligoNeu}"
+							label="Gesamtobligo neu" readonly="true" />
+
+					</h:panelGrid>
+				</t:fieldset>
+
+			</h:panelGrid>
+
+		</h:panelGrid>
+
+		<h:panelGrid cellspacing="0" cellpadding="0" style="width:100%;">
+
+			<t:fieldset id="besonderheiten"
+				legend="Besonderheiten für Checkliste">
+
+				<t:selectOneRadio id="finanzierungsart" style="border:0px;"
+					disabled="#{workflow.readonly}"
+					value="#{pc.value.finanzierungsart}" layout="spread">
+					<f:selectItems
+						value="#{enumType['de.subito.sunrise.model.control.admin.Finanzierungsart']}" />
+				</t:selectOneRadio>
+
+				<h:panelGrid columns="3">
+					<t:radio for="finanzierungsart" index="1" />
+					<t:radio for="finanzierungsart" index="2" />
+					<t:radio for="finanzierungsart" index="3" />
+					<t:radio for="finanzierungsart" index="4" />
+					<t:radio for="finanzierungsart" index="5" />
+					<t:radio for="finanzierungsart" index="7" />
+				</h:panelGrid>
+
+			</t:fieldset>
+
+			<t:fieldset id="sicherheiten" legend="Sicherheiten">
+
+				<h:panelGrid columns="6" cellspacing="4" cellpadding="4">
+
+					<sr:checkboxField id="grundschulden"
+						value="#{pc.value.grundschulden}" label="Neue Grundschulden" />
+
+					<sr:checkboxField id="bestehende_grundschuld"
+						value="#{pc.value.bestehendeGrundschulden}"
+						label="Bestehende Grundschulden" />
+
+					<sr:checkboxField id="verpfaendung"
+						value="#{pc.value.verpfaendung}" label="Verpfändung" />
+
+					<sr:checkboxField id="abtretung" value="#{pc.value.abtretung}"
+						label="Abtretung" />
+
+					<sr:checkboxField id="buergschaft" value="#{pc.value.buergschaft}"
+						label="Bürgschaft" />
+
+					<sr:checkboxField id="sue" value="#{pc.value.sue}" label="SÜ" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="3" cellspacing="4" cellpadding="4">
+
+					<sr:checkboxField id="objekt_bekannt"
+						value="#{pc.value.objektBekannt}" label="Beleihungsobjekt bekannt" />
+
+					<sr:checkboxField id="bestehende_grundschuld_fremd"
+						value="#{pc.value.bestehendeGrundschuldenFremd}"
+						label="Übernahme bestehender Grundschulden von Fremd-KI" />
+
+					<sr:checkboxField id="blanlo" value="#{pc.value.blanko}"
+						label="Keine Sicherheiten / Blanko" />
+
+				</h:panelGrid>
+
+			</t:fieldset>
+
+		</h:panelGrid>
+
+
+
+	</ui:composition>
+
+</jsp:root>
+

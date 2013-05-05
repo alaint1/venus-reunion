@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition>
+
+		<rich:modalPanel id="uebernahme" styleClass="dojoDialog"
+			autosized="true" showWhenRendered="#{pc.changePossible}"
+			minWidth="300" minHeight="100" moveable="true">
+			<f:facet name="header">
+				<h:outputText value="Übernahme des Vorgangs" />
+			</f:facet>
+			<h:outputText value="Möchten Sie den Vorgang übernehmen?" />
+
+			<h:panelGrid columns="2">
+
+				<t:div id="commit_div" styleClass="_btn">
+					<h:commandButton id="commit" value="OK"
+						action="#{pc.changeBearbeiter}" styleClass="_button btn_save">
+						<rich:componentControl for="uebernahme" attachTo="commit"
+							operation="hide" event="onclick" />
+					</h:commandButton>
+				</t:div>
+
+				<t:div id="abbrechen_div" styleClass="_btn">
+					<h:commandButton id="abbrechen" value="ABBRECHEN"
+						action="#{pc.reject()}" styleClass="_button btn_close">
+						<rich:componentControl for="uebernahme" attachTo="abbrechen"
+							operation="hide" event="onclick" />
+					</h:commandButton>
+				</t:div>
+
+			</h:panelGrid>
+
+		</rich:modalPanel>
+
+	</ui:composition>
+
+</jsp:root>
+

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition template="/pages/vorgang.xhtml">
+	
+		<ui:define name="_commandButtons" />
+
+		<ui:define name="_fullscreen">
+			<c:set var="fullscreen" value="#{true}" />
+		</ui:define>
+		
+		<ui:define name="_form">
+
+			<sr:panelTabbedPane id="vorgaenge_tabs">
+				<f:facet name="emptycell">
+					<sr:helpLink ref="Kaprios/Bearbeitung/Vorgangsinfo.htm#Dialog_Vorgangsliste_suche" />
+				</f:facet>
+				<t:panelTab id="vorgangsliste" label="Vorgangsliste">
+					<ui:include src="vorgangsinfo/vorgangsliste.xhtml" />
+				</t:panelTab>
+			</sr:panelTabbedPane>
+		</ui:define>
+
+	</ui:composition>
+
+</jsp:root>
+

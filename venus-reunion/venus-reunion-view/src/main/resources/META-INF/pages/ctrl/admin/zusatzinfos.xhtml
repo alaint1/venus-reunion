@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:security="http://www.springframework.org/security/tags"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition template="/pages/vorgang.xhtml">
+
+		<ui:define name="_title">
+			<sr:title value="Zusatzinfos Übersicht" />
+		</ui:define>
+
+		<ui:define name="_form">
+			<sr:helpLink
+				ref="Kaprios/Administration Kaprios/AdminiSteuerungstool.htm#Admini_Steuerungstool_Uebers_Zusatzinfo" />
+
+			<sr:checkboxField id="aktivieren"
+				value="#{parameterHolder['ctrl.parameter.zusatzinfoAktivieren'].booleanValue}"
+				label="Zusatzinfo aktivieren">
+				<a4j:support event="onclick" action="#{parameterHolder.save}" />
+			</sr:checkboxField>
+
+			<sr:dataTable id="data" value="#{controller.dataModel}" var="bean"
+				deleteMessage="Infoelement löschen?" dataScrollerInfo="true">
+
+				<t:column id="column_open" headerstyle="width:18px;">
+					<sr:iconActionOpen>
+						<f:setPropertyActionListener target="#{controller.value}"
+							value="#{bean}" />
+					</sr:iconActionOpen>
+				</t:column>
+
+				<t:column>
+					<f:facet name="header">
+						<h:outputText value="Bezeichnung" />
+					</f:facet>
+					<t:commandLink id="column_open_link" action="#{controller.open}">
+						<f:setPropertyActionListener target="#{controller.value}"
+							value="#{bean}" />
+					</t:commandLink>
+						<h:outputText value="#{bean.bezeichnung}" />
+				</t:column>
+				<t:column>
+					<f:facet name="header">
+						<h:outputText value="Prozess" />
+					</f:facet>
+
+					<h:outputText value="#{bean.prozess.name}" />
+
+				</t:column>
+
+				<t:column headerstyle="width:18px;">
+					<sr:iconActionRemove>
+						<f:setPropertyActionListener target="#{controller.value}"
+							value="#{bean}" />
+					</sr:iconActionRemove>
+				</t:column>
+
+			</sr:dataTable>
+
+			<t:div styleClass="space-small" />
+
+			<t:div styleClass="_btn">
+				<t:commandButton id="createZusatzinfo"
+					disabled="#{workflow.readonly}" styleClass="_button btn_new"
+					value="NEU" action="#{controller.createZusatzinfo}">
+				</t:commandButton>
+			</t:div>
+
+		</ui:define>
+	</ui:composition>
+
+</jsp:root>
+

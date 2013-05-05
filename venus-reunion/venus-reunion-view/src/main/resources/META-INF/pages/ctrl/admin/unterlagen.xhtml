@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:security="http://www.springframework.org/security/tags"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition template="/pages/vorgang.xhtml">
+
+		<ui:define name="_title">
+			<sr:title value="Unterlagen" />
+		</ui:define>
+
+		<ui:define name="_form">
+			<sr:helpLink ref="Kaprios/Administration Kaprios/AdminiSteuerungstool.htm#Admini_Steuerungstool_Unterlagen" />
+
+			<t:fieldset legend="Filter">
+
+				<sr:textField id="bezeichnung"
+					value="#{controller.dataModel.searchObject.bezeichnung}"
+					label="Bezeichnung">
+					<a4j:support event="onkeyup" action="#{controller.dataModel.reset}"
+						reRender="datagroup" />
+				</sr:textField>
+
+			</t:fieldset>
+
+			<sr:dataTable id="data" value="#{controller.dataModel}" var="bean"
+				sortColumn="#{controller.dataModel.order}" rows="20"
+				sortAscending="#{controller.dataModel.ascending}"
+				deleteMessage="Unterlage löschen?"
+				deleteReRender="data, unterlageDet" dataScrollerInfo="true">
+
+				<t:column id="column_open" headerstyle="width:18px;">
+					<sr:iconActionOpen>
+						<f:setPropertyActionListener target="#{controller.value}"
+							value="#{bean}" />
+					</sr:iconActionOpen>
+				</t:column>
+
+				<t:column>
+					<f:facet name="header">
+						<t:commandSortHeader columnName="bezeichnung" arrow="true"
+							propertyName="bezeichnung">
+							<h:outputText value="Bezeichnung" />
+						</t:commandSortHeader>
+					</f:facet>
+					<t:commandLink id="column_open_link" action="#{controller.open}">
+						<f:setPropertyActionListener target="#{controller.value}"
+							value="#{bean}" />
+						<h:outputText value="#{bean.bezeichnung}" />
+					</t:commandLink>
+				</t:column>
+
+				<t:column headerstyle="width:18px;">
+					<sr:iconActionRemove>
+						<f:setPropertyActionListener target="#{controller.value}"
+							value="#{bean}" />
+					</sr:iconActionRemove>
+				</t:column>
+
+			</sr:dataTable>
+
+
+			<!-- 			<t:div styleClass="space-small" /> -->
+
+			<!-- 			<t:div styleClass="_btn"> -->
+			<!-- 				<t:commandButton id="createUnterlage" -->
+			<!-- 					disabled="#{workflow.readonly}" styleClass="_button btn_new" -->
+			<!-- 					value="NEU" action="#{controller.createUnterlage}"> -->
+			<!-- 				</t:commandButton> -->
+			<!-- 			</t:div> -->
+
+
+		</ui:define>
+	</ui:composition>
+
+</jsp:root>
+

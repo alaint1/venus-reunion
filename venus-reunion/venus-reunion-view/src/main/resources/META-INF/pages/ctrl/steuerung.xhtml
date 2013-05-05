@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition template="/pages/vorgang.xhtml">
+
+		<ui:define name="_title">
+
+			<sr:title value="#{controller.title}" />
+
+		</ui:define>
+
+		<ui:define name="_form">
+
+			<sr:panelTabbedPane id="_tabs">
+
+				<t:panelTab id="vorgang" label="Vorgang">
+					<c:if test="#{pc.value.prozess.prozessArt != 'SONST'}">
+						<ui:include src="steuerung/vorgang.xhtml" />
+					</c:if>
+					<c:if test="#{pc.value.prozess.prozessArt == 'SONST'}">
+						<ui:include src="steuerung/vorgang-sonst.xhtml" />
+					</c:if>
+				</t:panelTab>
+				<t:panelTab id="auszahlungsinfo" label="Auszahlungsinfo"
+					rendered="#{pc.value.prozess.prozessArt == 'NEU' and !pc.value.auszahlungsinfos.isEmpty()}">
+					<ui:include src="steuerung/auszahlungsinfo.xhtml" />
+				</t:panelTab>
+				<t:panelTab id="unterlagen_check" label="Unterlagen"
+					rendered="#{pc.value.prozess.prozessArt != 'SONST'}">
+					<ui:include src="steuerung/unterlagen-checkliste.xhtml" />
+				</t:panelTab>
+				<t:panelTab id="status" label="Status">
+					<ui:include src="steuerung/bearbeitung.xhtml" />
+				</t:panelTab>
+				<t:panelTab id="beschlussbuch" label="Zusatzinfo"
+					rendered="#{pc.value.prozess.prozessArt != 'SONST'}">
+					<ui:include src="steuerung/zusatzinfo.xhtml" />
+				</t:panelTab>
+			</sr:panelTabbedPane>
+		</ui:define>
+
+		<ui:define name="_bottomBar">
+			<t:div styleClass="bottomBar">
+
+				<h:panelGrid style="height:30px;width:100%;"
+					columnClasses="align_bottom">
+
+					<t:div styleClass="_btn">
+						<h:commandButton value="CHECKLISTE" styleClass="_button btn_new"
+							action="#{ctrlUnterlagenChecklisteController.createCheckliste}"
+							disabled="#{workflow.readonly or !pc.value.unterlagen.isEmpty()}"
+							rendered="#{pc.value.prozess.prozessArt != 'SONST'}" />
+
+						<a4j:commandButton id="delete" value="CHECKLISTE VERWERFEN"
+							styleClass="_button btn_delete" style="width:15em;"
+							disabled="#{workflow.readonly or pc.value.unterlagen.isEmpty()}"
+							rendered="#{pc.value.prozess.prozessArt != 'SONST'}">
+							<rich:componentControl for="delete_dlg" operation="show"
+								event="oncomplete" />
+						</a4j:commandButton>
+
+						<h:commandButton value="CHECKLISTE DRUCKEN"
+							styleClass="_button btn_print" style="width:15em;"
+							action="#{ctrlUnterlagenChecklisteController.print}"
+							disabled="#{workflow.readonly or pc.value.unterlagen.isEmpty()}"
+							rendered="#{pc.value.prozess.prozessArt != 'SONST'}" />
+
+						<h:commandButton id="btn_auszahlungsinfo" value="AUSZAHLUNGSINFO"
+							styleClass="_button btn_new" style="width:12em;"
+							action="#{controller.createAuszahlungsinfo}"
+							disabled="#{workflow.readonly or !pc.isNeueAuszahlungsinfoMoeglich()}"
+							rendered="#{pc.value.prozess.prozessArt == 'NEU'}" />
+
+						<a4j:commandButton value="AUFGABE PAUSIEREN"
+							styleClass="_button btn_pause" style="width:14em;"
+							rendered="#{!controller.value.pausiert and controller.value.endeAm == null
+								 and parameterHolder['ctrl.parameter.pausenAktiviert'].booleanValue}">
+							<rich:componentControl for="pause_dlg" operation="show"
+								event="oncomplete" />
+						</a4j:commandButton>
+
+						<h:commandButton value="AUFGABE REAKTIVIEREN"
+							styleClass="_button btn_start" style="width:14em;"
+							action="#{controller.reaktiviere}"
+							rendered="#{controller.value.pausiert}" />
+
+						<h:commandButton value="WV" styleClass="_button btn_new"
+							style="width:9em;" action="#{controller.showWv}"
+							disabled="#{workflow.readonly}" />
+
+						<t:commandButton id="emailDlgOpen" value="EMAIL"
+							style="width:9em;"
+							rendered="#{parameterHolder['ctrl.parameter.mailManuellAktiviert'].booleanValue}"
+							styleClass="_button btn_send" action="#{controller.showEmail}" />
+					</t:div>
+				</h:panelGrid>
+			</t:div>
+
+			<ui:include src="inc-manuelle-wv.xhtml" />
+
+			<rich:modalPanel id="delete_dlg" styleClass="dojoDialog"
+				autosized="true" minWidth="220">
+				<h:panelGrid columns="2">
+					<f:facet name="header">
+						<h:outputText style="font-weight:normal"
+							value="#{sr:text('label.control.menu.admin.steuerung.checkliste.remove')}" />
+					</f:facet>
+					<t:commandButton id="delete_dlg_ok" immediate="true"
+						action="#{ctrlUnterlagenChecklisteController.resetCheckliste}"
+						styleClass="_button btn_save"
+						value="#{sr:text('label.control.menu.admin.steuerung.checkliste.ok')}">
+						<rich:componentControl for="delete_dlg" attachTo="delete_dlg_ok"
+							operation="hide" event="onclick" />
+					</t:commandButton>
+					<t:commandButton id="delete_dlg_cancel" immediate="true"
+						styleClass="_button btn_abort"
+						value="#{sr:text('label.control.menu.admin.steuerung.checkliste.cancel')}">
+						<rich:componentControl for="delete_dlg"
+							attachTo="delete_dlg_cancel" operation="hide" event="onclick" />
+					</t:commandButton>
+				</h:panelGrid>
+			</rich:modalPanel>
+
+			<rich:modalPanel id="pause_dlg" styleClass="dojoDialog"
+				autosized="true" minWidth="220">
+
+				<f:facet name="header">
+					<h:outputText style="font-weight:normal" value="Aufgabe pausieren?" />
+				</f:facet>
+
+				<sr:comboboxField id="pause_begr" emptyItem="false"
+					value="#{controller.begruendung}"
+					items="#{pausenBegruendungenGenerator.all}"
+					converter="#{pausenBegruendungenGenerator.converterAll}"
+					label="Begründung" />
+
+				<h:panelGrid columns="2">
+
+					<t:commandButton id="pause_dlg_ok" immediate="true"
+						action="#{controller.pausiere}" styleClass="_button btn_save"
+						value="#{sr:text('label.control.menu.admin.steuerung.checkliste.ok')}">
+						<rich:componentControl for="pause_dlg" attachTo="pause_dlg_ok"
+							operation="hide" event="onclick" />
+					</t:commandButton>
+
+					<t:commandButton id="pause_dlg_cancel" immediate="true"
+						styleClass="_button btn_abort"
+						value="#{sr:text('label.control.menu.admin.steuerung.checkliste.cancel')}">
+						<rich:componentControl for="pause_dlg" attachTo="pause_dlg_cancel"
+							operation="hide" event="onclick" />
+					</t:commandButton>
+
+				</h:panelGrid>
+			</rich:modalPanel>
+
+		</ui:define>
+
+		<ui:define name="_navBottom">
+			<ui:include src="inc-sla-zeiten.xhtml" />
+		</ui:define>
+
+	</ui:composition>
+
+</jsp:root>

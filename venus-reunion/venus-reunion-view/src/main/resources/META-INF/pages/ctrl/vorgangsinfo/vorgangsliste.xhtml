@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition>
+
+		<h:panelGrid columns="5">
+
+			<sr:textField id="filter_vorgangsNr"
+				value="#{controller.dataModel.searchObject.vorgangsNr}" size="5"
+				maxlength="10" label="#{sr:text('label.core.aufgaben.vorgangsnr')}"
+				reRenderInstantly="datagroup" />
+
+			<sr:textField id="filter_extvorgangsNr"
+				value="#{controller.dataModel.searchObject.externeVorgangsNr}"
+				size="5" maxlength="10" label="Externe Vorgangs-Nr."
+				reRenderInstantly="datagroup" />
+
+			<sr:textField id="filter_kunde"
+				value="#{controller.dataModel.searchObject.antragsteller}" size="40"
+				label="Kundenname" reRenderInstantly="datagroup" />
+
+			<sr:textField id="filter_persNr"
+				value="#{controller.dataModel.searchObject.personenNr}" size="5"
+				maxlength="10" label="Pers.-Nr" reRenderInstantly="datagroup" />
+
+			<sr:comboboxField id="filter_user" label="Aktueller Bearbeiter"
+				value="#{controller.dataModel.searchObject.sachbearbeiter}"
+				items="#{userItemGenerator.all}" emptyItem="true"
+				reRender="datagroup" />
+
+		</h:panelGrid>
+
+		<h:panelGrid columns="6">
+
+			<sr:comboboxField id="filter_prozess"
+				value="#{controller.dataModel.searchObject.prozess}"
+				items="#{workflow.controller.processes}" emptyItem="true"
+				reRender="datagroup" label="#{sr:text('label.core.process')}" />
+
+			<sr:comboboxField id="filter_role" label="Rolle"
+				value="#{controller.dataModel.searchObject.rolle}"
+				items="#{rolleItems.items}" converter="#{rolleItems.converter}"
+				emptyItem="true" reRender="datagroup" />
+
+			<sr:comboboxField id="filter_berater" label="Aktueller Berater"
+				value="#{controller.dataModel.searchObject.berater}"
+				items="#{userItemsRole.getItems('base.roleId.beratung')}"
+				emptyItem="true" reRender="datagroup" />
+
+			<!-- 	<sr:dateField id="filter_anlageVon"
+				value="#{controller.dataModel.searchObject.anlageVon}"
+				label="Anlagedatum von" reRender="datagroup" />
+
+			<sr:dateField id="filter_anlageBis"
+				value="#{controller.dataModel.searchObject.anlageBis}"
+				label="Anlagedatum bis" reRender="datagroup" />
+ -->
+
+			<t:div>
+				<sr:checkboxField id="erledigte"
+					value="#{controller.dataModel.searchObject.abgeschlossen}"
+					readonly="never" label="Nur Abgeschlossene">
+					<a4j:support event="onclick" action="#{controller.dataModel.reset}"
+						reRender="datagroup" />
+				</sr:checkboxField>
+				<sr:checkboxField id="unverteilte"
+					value="#{controller.dataModel.searchObject.unverteilt}"
+					label="Nicht Zugeordnete" reRender="datagroup" />
+			</t:div>
+		</h:panelGrid>
+
+
+		<sr:dataTable value="#{workflow.controller.dataModel}" var="bean"
+			dataScrollerInfo="true" id="data">
+			<t:column id="column_open" headerstyle="width:18px;">
+				<sr:iconActionOpen>
+					<f:setPropertyActionListener target="#{controller.vorgangId}"
+						value="#{bean.data[0]}" />
+				</sr:iconActionOpen>
+			</t:column>
+
+			<t:column headerstyle="width:150px;">
+				<f:facet name="header">
+					<h:outputText value="#{sr:text('label.core.process')}" />
+				</f:facet>
+				<t:commandLink id="vorgang_load_action2" immediate="true"
+					action="#{workflow.controller.open}"
+					title="#{bean.data[3].bezeichnung}">
+					<f:setPropertyActionListener
+						target="#{workflow.controller.vorgangId}" value="#{bean.data[0]}" />
+					<h:outputText value="#{bean.data[2]}" />
+				</t:commandLink>
+			</t:column>
+
+			<t:column headerstyle="width:120px;">
+				<f:facet name="header">
+					<h:outputText
+						value="#{sr:text('label.core.aufgaben.aktuellerteilprozess')}" />
+				</f:facet>
+				<t:commandLink id="vorgang_load_action3" immediate="true"
+					title="#{bean.data[3].bezeichnung}"
+					action="#{workflow.controller.open}">
+					<f:setPropertyActionListener
+						target="#{workflow.controller.vorgangId}" value="#{bean.data[0]}" />
+					<t:outputText
+						value="#{empty bean.data[3].status.phase.name ? bean.data[3].status.phasenName : bean.data[3].status.phase.name}" />
+				</t:commandLink>
+			</t:column>
+
+			<t:column headerstyle="width:120px;">
+				<f:facet name="header">
+					<h:outputText value="Kunde" />
+				</f:facet>
+				<h:outputText value="#{bean.data[3].bezeichnungKunde}" />
+			</t:column>
+
+			<!-- 			<t:column headerstyle="width:120px;"> -->
+			<!-- 				<f:facet name="header"> -->
+			<!-- 					<h:outputText value="Mandant" /> -->
+			<!-- 				</f:facet> -->
+			<!-- 				<h:outputText value="#{bean.data[5]}" /> -->
+			<!-- 			</t:column> -->
+
+			<t:column styleClass="numberColumn" headerstyle="width:50px;">
+				<f:facet name="header">
+					<h:outputText value="Externe Vorgangs-Nr." />
+				</f:facet>
+				<t:commandLink id="vorgang_open_action" immediate="true"
+					action="#{workflow.controller.open}">
+					<f:setPropertyActionListener
+						target="#{workflow.controller.vorgangId}" value="#{bean.data[0]}" />
+					<h:outputText value="#{bean.data[3].externeVorgangsNr}" />
+				</t:commandLink>
+			</t:column>
+
+			<t:column styleClass="numberColumn" headerstyle="width:50px;">
+				<f:facet name="header">
+					<h:outputText value="#{sr:text('label.core.aufgaben.vorgangsnr')}" />
+				</f:facet>
+				<t:commandLink id="vorgang_open_action2" immediate="true"
+					action="#{workflow.controller.open}">
+					<f:setPropertyActionListener
+						target="#{workflow.controller.vorgangId}" value="#{bean.data[0]}" />
+					<h:outputText value="#{bean.data[0]}" />
+				</t:commandLink>
+			</t:column>
+
+			<t:column headerstyle="width:100px;">
+				<f:facet name="header">
+					<h:outputText
+						value="#{sr:text('label.core.aufgaben.zustaendigerolle')}" />
+				</f:facet>
+				<h:outputText rendered="#{not empty bean.data[4]}"
+					value="#{bean.data[4].name}" />
+			</t:column>
+
+			<t:column headerstyle="width:150px;">
+				<f:facet name="header">
+					<h:outputText value="Aktueller Bearbeiter" />
+				</f:facet>
+				<h:outputText value="#{bean.data[6].name}" />
+			</t:column>
+
+			<t:column styleClass="uebernahmeColumn" headerstyle="width:18px;">
+				<a4j:commandLink id="vorgang_uebernahme_action"
+					rendered="#{controller.canTakeOver(bean.data[4],bean.data[6]) and !controller.dataModel.searchObject.abgeschlossen}">
+					<h:graphicImage alt="Übernahme" url="/weblets/icons/selector.gif"
+						title="Übernahme des Vorgangs und Sprung in die Aufgabe" />
+					<f:setPropertyActionListener
+						target="#{vorgangAufgabeController.vorgangId}"
+						value="#{bean.data[0]}" />
+					<rich:componentControl for="uebernahme_dlg"
+						attachTo="vorgang_uebernahme_action" operation="show"
+						event="onclick" />
+				</a4j:commandLink>
+
+			</t:column>
+
+		</sr:dataTable>
+
+		<rich:modalPanel id="uebernahme_dlg" styleClass="dojoDialog"
+			autosized="true" minWidth="300" minHeight="100" moveable="true">
+			<f:facet name="header">
+				<h:outputText value="Übernahme des Vorgangs" />
+			</f:facet>
+			<h:outputText
+				value="Möchten Sie den Vorgang übernehmen und bearbeiten?" />
+
+			<h:panelGrid columns="2">
+
+				<t:div id="commit_div" styleClass="_btn">
+					<h:commandButton id="commit" value="OK"
+						action="#{vorgangAufgabeController.openAndChange}"
+						styleClass="_button btn_save">
+						<rich:componentControl for="uebernahme_dlg" attachTo="commit"
+							operation="hide" event="onclick" />
+					</h:commandButton>
+				</t:div>
+
+				<t:div id="cancel_div" styleClass="_btn">
+					<h:commandButton id="cancel" value="ABBRECHEN"
+						styleClass="_button btn_close">
+						<rich:componentControl for="uebernahme_dlg" attachTo="cancel"
+							operation="hide" event="onclick" />
+					</h:commandButton>
+				</t:div>
+
+			</h:panelGrid>
+
+		</rich:modalPanel>
+
+
+	</ui:composition>
+
+</jsp:root>

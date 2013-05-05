@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:security="http://www.springframework.org/security/tags"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition template="/pages/vorgang.xhtml">
+
+		<ui:define name="_title">
+			<sr:title value="Kompetenzträger" />
+		</ui:define>
+
+		<ui:define name="_form">
+			<sr:helpLink ref="Kaprios/Administration Kaprios/AdminiSteuerungstool.htm#Admini_Steuerungstool_Kompetenztraeger" />
+
+			<sr:dataTable id="data" value="#{controller.dataModel}" var="bean"
+				dataScrollerInfo="true">
+
+				<t:column headerstyle="width:18px;">
+					<sr:iconActionOpenClose target="#{controller.value}"
+						alt="Öffnen/Schließen" title="Kompetenzträger Öffnen/Schließen"
+						value="#{bean}" reRender="erg,data">
+					</sr:iconActionOpenClose>
+				</t:column>
+
+				<t:column style="width:300px;">
+					<f:facet name="header">
+						<h:outputText value="Kompetenzträger" />
+					</f:facet>
+					<a4j:commandLink id="opn"
+						styleClass="#{bean == controller.value ? 'redFont' : null}"
+						value="#{bean.funktion}" reRender="erg,data">
+						<f:setPropertyActionListener target="#{controller.value}"
+							value="#{bean}" />
+					</a4j:commandLink>
+				</t:column>
+
+				<t:column headerstyle="width:18px;">
+					<sr:iconActionRemove>
+						<f:setPropertyActionListener target="#{controller.valueId}"
+							value="#{bean.id}" />
+					</sr:iconActionRemove>
+				</t:column>
+
+			</sr:dataTable>
+
+			<t:div styleClass="space" />
+
+			<t:div styleClass="_btn">
+				<t:commandButton id="n_p" disabled="#{workflow.readonly}"
+					styleClass="_button btn_new" value="NEU" reRender="data"
+					action="#{controller.create}">
+				</t:commandButton>
+			</t:div>
+
+			<t:div style="height:20px" />
+
+			<t:div id="erg">
+				<t:div rendered="#{workflow.controller.value != null}">
+					<h:panelGrid columns="1">
+
+						<sr:textField id="beschreibung"
+							value="#{workflow.controller.value.funktion}" maxlength="200"
+							size="120" label="Kompetenzträger" />
+
+					</h:panelGrid>
+
+				</t:div>
+				
+			</t:div>
+
+		</ui:define>
+	</ui:composition>
+
+</jsp:root>
+

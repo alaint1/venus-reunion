@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition>
+
+
+		<sr:helpLink
+			ref="Kaprios/Bearbeitung/Vorgangsinfo.htm#Vorgangsinfo_Unterlagen" />
+
+		<c:set var="tc" value="#{ctrlUnterlagenChecklisteController}" />
+		<h:panelGrid columns="2">
+
+			<t:div id="status_img">
+				<h:panelGrid columns="2">
+					<t:graphicImage alt="" url="#{tc.imageAuszahlungsreif}"
+						style="border:0;" />
+					<sr:outputLabel for="status_img" value="Bearbeitungsreife" />
+				</h:panelGrid>
+			</t:div>
+
+			<sr:textField id="besonderheiten" value="#{tc.value.besonderheiten}"
+				size="100" disabled="#{workflow.readonly}" label="Besonderheiten" />
+
+		</h:panelGrid>
+
+		<t:fieldset>
+
+			<h:panelGrid columns="3">
+
+				<sr:comboboxField id="search_zweck" readonly="never"
+					inputStyle="max-width:160px;"
+					value="#{tc.unterlagenSearchObject.zweck}"
+					items="#{enumType['de.subito.sunrise.model.control.admin.UnterlagenZweck']}"
+					label="Unterlagen für">
+					<!-- 			<f:selectItem itemValue="" itemLabel="Alle" /> -->
+					<a4j:support event="onchange" action="#{tc.filterUnterlagen}"
+						reRender="data" />
+				</sr:comboboxField>
+
+				<sr:comboboxField id="search_status" readonly="never"
+					inputStyle="max-width:160px;" emptyItem="true"
+					value="#{tc.unterlagenSearchObject.unterlagenStatus}"
+					label="Unterlagenstatus">
+					<f:selectItem itemValue="BEIGEFUEGT" itemLabel="Beigefügt" />
+					<f:selectItem itemValue="ANGEFORDERT" itemLabel="Angefordert" />
+					<f:selectItem itemValue="NACHZUREICHEN" itemLabel="Nachzureichen" />
+					<f:selectItem itemValue="IN_AKTE" itemLabel="Bereits in Akte" />
+					<f:selectItem itemValue="VERZICHT" itemLabel="Verzicht" />
+					<a4j:support event="onchange" action="#{tc.filterUnterlagen}"
+						reRender="data" />
+				</sr:comboboxField>
+
+				<sr:checkboxField id="offeneUnterlagen"
+					value="#{tc.unterlagenSearchObject.offeneUnterlagen}"
+					readonly="never" label="offene Unterlagen">
+					<a4j:support event="onclick" action="#{tc.filterUnterlagen}"
+						reRender="data" />
+				</sr:checkboxField>
+
+
+
+			</h:panelGrid>
+
+			<sr:dataTable id="data" value="#{tc.unterlagen}" var="bean"
+				dataScroller="true" rows="500">
+
+				<t:column headerstyle="width:500px;">
+					<f:facet name="header">
+						<t:commandSortHeader columnName="bezeichnung" arrow="true"
+							propertyName="bezeichnung">
+							<h:outputText value="Bezeichnung" />
+						</t:commandSortHeader>
+					</f:facet>
+					<t:div style="#{bean.style}">
+						<h:outputText value="#{bean.text}" />
+
+						<h:commandLink id="close_bemerkung"
+							disabled="#{workflow.readonly}"
+							rendered="#{bean.editBemerkung || bean.unterlage.interneBemerkung != null}"
+							action="#{bean.toggleEditMode}"
+							title="#{bean.unterlage.interneBemerkung}">
+							<t:graphicImage alt="" url="/weblets/icons/information.gif" />
+						</h:commandLink>
+
+						<a4j:commandLink id="delete"
+							rendered="#{!workflow.readonly and bean.editBemerkung and bean.unterlage.interneBemerkung != null}"
+							action="#{bean.removeBemerkung}" reRender="data"
+							title="Bemerkung löschen">
+							<t:graphicImage alt="" url="/weblets/icons/delete.gif" />
+						</a4j:commandLink>
+
+					</t:div>
+					<t:div rendered="#{bean.editBemerkung}" style="padding-left:2em;">
+						<sr:textField id="interneBemerkung"
+							disabled="#{workflow.readonly}"
+							value="#{bean.unterlage.interneBemerkung}" size="50" />
+					</t:div>
+				</t:column>
+
+				<t:column style="text-align:center;">
+					<f:facet name="header">
+						<h:outputText value="Zweck" />
+					</f:facet>
+					<h:outputText value="#{enumTextShort[bean.unterlage.zweck]}"
+						title="#{enumText[bean.unterlage.zweck]}" />
+				</t:column>
+
+				<t:column style="text-align:center;">
+					<f:facet name="header">
+						<h:outputText value="Beigefügt" />
+					</f:facet>
+
+					<t:selectOneRadio id="unterlagenstatus1" style="border:0px;"
+						rendered="#{bean.unterlage != null}" layout="spread"
+						disabled="#{workflow.readonly}" value="#{bean.unterlagenStatus}"
+						title="Beigefügt">
+						<f:selectItems
+							value="#{enumType['de.subito.sunrise.model.control.admin.UnterlagenStatus']}" />
+						<a4j:support event="onclick" ajaxSingle="true"
+							reRender="mainForm:vorgang_form:unterlagen_check:status_img,data"
+							action="#{tc.setNewStatus(bean.unterlage,'BEIGEFUEGT')}" />
+					</t:selectOneRadio>
+					<t:radio for="unterlagenstatus1" index="1"
+						rendered="#{bean.unterlage != null}" />
+
+
+				</t:column>
+
+				<t:column style="text-align:center;">
+					<f:facet name="header">
+						<h:outputText value="Angefordert" />
+					</f:facet>
+
+					<t:selectOneRadio id="unterlagenstatus2" style="border:0px;"
+						rendered="#{bean.unterlage != null}" layout="spread"
+						disabled="#{workflow.readonly}" value="#{bean.unterlagenStatus}"
+						title="Angefordert">
+
+						<f:selectItems
+							value="#{enumType['de.subito.sunrise.model.control.admin.UnterlagenStatus']}" />
+						<a4j:support event="onclick" ajaxSingle="true"
+							reRender="mainForm:vorgang_form:unterlagen_check:status_img,data"
+							action="#{tc.setNewStatus(bean.unterlage,'ANGEFORDERT')}" />
+					</t:selectOneRadio>
+					<t:radio for="unterlagenstatus2" index="2"
+						rendered="#{bean.unterlage != null}" />
+
+
+				</t:column>
+
+				<t:column style="text-align:center;">
+					<f:facet name="header">
+						<h:outputText value="Nach- zureichen" />
+					</f:facet>
+
+					<t:selectOneRadio id="unterlagenstatus3" style="border:0px;"
+						rendered="#{bean.unterlage != null}" layout="spread"
+						disabled="#{workflow.readonly}" value="#{bean.unterlagenStatus}"
+						title="Nachzureichen">
+
+						<f:selectItems
+							value="#{enumType['de.subito.sunrise.model.control.admin.UnterlagenStatus']}" />
+						<a4j:support event="onclick" ajaxSingle="true"
+							reRender="mainForm:vorgang_form:unterlagen_check:status_img,data"
+							action="#{tc.setNewStatus(bean.unterlage,'NACHZUREICHEN')}" />
+					</t:selectOneRadio>
+					<t:radio for="unterlagenstatus3" index="3"
+						rendered="#{bean.unterlage != null}" />
+
+				</t:column>
+
+				<t:column style="text-align:center;">
+					<f:facet name="header">
+						<h:outputText value="Verzicht/nicht benötigt" />
+					</f:facet>
+
+					<t:selectOneRadio id="unterlagenstatus5" style="border:0px;"
+						rendered="#{bean.unterlage != null}" layout="spread"
+						disabled="#{workflow.readonly || !bean.unterlage.verzichtMoeglich}"
+						value="#{bean.unterlagenStatus}" title="Verzicht/nicht benötigt">
+
+						<f:selectItems
+							value="#{enumType['de.subito.sunrise.model.control.admin.UnterlagenStatus']}" />
+						<a4j:support event="onclick" ajaxSingle="true"
+							reRender="mainForm:vorgang_form:unterlagen_check:status_img,data"
+							action="#{tc.setNewStatus(bean.unterlage,'VERZICHT')}" />
+					</t:selectOneRadio>
+					<t:radio for="unterlagenstatus5" index="5"
+						rendered="#{bean.unterlage != null}" />
+
+				</t:column>
+				<t:column style="text-align:center;">
+					<f:facet name="header">
+						<h:outputText value="In Akte/erledigt" />
+					</f:facet>
+
+					<t:selectOneRadio id="unterlagenstatus4" style="border:0px;"
+						rendered="#{bean.unterlage != null}" layout="spread"
+						disabled="#{workflow.readonly}" value="#{bean.unterlagenStatus}"
+						title="In Akte/erledigt">
+
+						<f:selectItems
+							value="#{enumType['de.subito.sunrise.model.control.admin.UnterlagenStatus']}" />
+						<a4j:support event="onclick" ajaxSingle="true"
+							reRender="mainForm:vorgang_form:unterlagen_check:status_img,data"
+							action="#{tc.setNewStatus(bean.unterlage,'IN_AKTE')}" />
+					</t:selectOneRadio>
+					<t:radio for="unterlagenstatus4" index="4"
+						rendered="#{bean.unterlage != null}" />
+
+
+				</t:column>
+
+
+
+				<t:column headerstyle="width:40px;">
+					<f:facet name="header">
+						<h:outputText value="" />
+					</f:facet>
+
+					<h:panelGrid columns="3">
+
+						<h:commandLink id="back"
+							rendered="#{!workflow.readonly and bean.unterlage != null}"
+							reRender="mainForm:vorgang_form:unterlagen_check:status_img"
+							action="#{tc.setNewStatus(bean.unterlage, null)}"
+							title="Zurücksetzen">
+							<t:graphicImage alt="" url="/weblets/icons/undo_edit.gif" />
+						</h:commandLink>
+
+						<t:graphicImage
+							rendered="#{workflow.readonly and bean.unterlage != null}" alt=""
+							url="/weblets/icons/dis_undo_edit.gif" />
+
+						<t:div styleClass="space-small" />
+
+						<h:commandLink id="bemerkung" rendered="#{bean.unterlage != null}"
+							action="#{bean.toggleEditMode}" title="Interne Bemerkung">
+							<t:graphicImage alt="" url="/weblets/icons/information.gif" />
+						</h:commandLink>
+
+					</h:panelGrid>
+
+				</t:column>
+
+			</sr:dataTable>
+
+			<t:div styleClass="space-small" />
+
+			<t:div styleClass="_btn">
+				<h:commandButton value="NEUE UNTERLAGE" styleClass="_button btn_new"
+					disabled="#{workflow.readonly}"
+					action="#{tc.createExotenUnterlage}" style="width:12em;" />
+
+			</t:div>
+
+		</t:fieldset>
+
+		<t:div styleClass="space-small" />
+
+		<t:fieldset legend="Neue Unterlage"
+			rendered="#{tc.exotenUnterlage != null}">
+
+			<sr:textField id="bezeichnung" required="true"
+				value="#{tc.exotenUnterlage.bezeichnung}" size="120" maxlength="200"
+				label="Unterlagenbezeichnung" />
+
+			<sr:comboboxField id="zweck" value="#{tc.exotenUnterlage.zweck}"
+				required="true"
+				items="#{enumType['de.subito.sunrise.model.control.admin.UnterlagenZweck']}"
+				label="Zweck" />
+
+			<h:panelGrid columns="2">
+
+				<t:div styleClass="_btn">
+					<h:commandButton value="ANLEGEN" styleClass="_button btn_new"
+						disabled="#{workflow.readonly}" action="#{tc.saveExot}" />
+				</t:div>
+
+				<t:div styleClass="_btn">
+					<h:commandButton value="ABBRECHEN" disabled="#{workflow.readonly}"
+						styleClass="_button btn_abort">
+						<f:setPropertyActionListener target="#{tc.exotenUnterlage}"
+							value="#{null}" />
+					</h:commandButton>
+				</t:div>
+
+			</h:panelGrid>
+
+		</t:fieldset>
+
+	</ui:composition>
+
+</jsp:root>
+

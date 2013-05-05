@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://www.softcam.de/venus-workflow"
+	xmlns:xsi="http://http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.softcam.com/venus-workflow http://www.softcam.de/venus/workflow.xsd">
+
+	<!-- Administration - Modul Steuerungstool -->
+	<phase name="label.control.menu.admin" role="ROLE_CTRL_ADMIN"
+		module="Steuerungstool" expand="true">
+
+		<phase name="label.control.menu.admin.unterlagen" page="ctrl/admin/unterlagen"
+			controller="admCtrlUnterlagenController">
+
+			<phase name="label.control.menu.admin.unterlage"
+				bean="com.softcam.venus.model.control.admin.AdmCtrlRelevanteUnterlage"
+				page="ctrl/admin/unterlage" controller="admCtrlUnterlagenController" />
+
+		</phase>
+
+		<phase name="label.control.menu.admin.unterlagengruppen" page="ctrl/admin/unterlagengruppen"
+			controller="admCtrlUnterlagengruppenController">
+
+			<phase name="label.control.menu.admin.unterlagengruppe"
+				bean="com.softcam.venus.model.control.admin.AdmCtrlUnterlagenGruppe"
+				page="ctrl/admin/gruppe" controller="admCtrlUnterlagengruppenController" />
+
+		</phase>
+
+		<phase name="label.control.menu.admin.initialimport" page="ctrl/admin/initialimport"
+			controller="admCtrlInitialimportController" />
+
+		<phase name="label.control.menu.admin.zusatzinfos" page="ctrl/admin/zusatzinfos"
+			controller="admCtrlZusatzinfoController">
+
+			<phase name="label.control.menu.admin.zusatzinfo" page="ctrl/admin/zusatzinfo"
+				controller="admCtrlZusatzinfoController" bean="com.softcam.venus.model.control.admin.AdmCtrlZusatzinfo">
+
+				<phase name="label.control.menu.admin.infoelement"
+					bean="com.softcam.venus.model.control.admin.AdmCtrlInfoelement"
+					page="ctrl/admin/zusatzinfoelement" controller="admCtrlInfoelementController" />
+			</phase>
+
+		</phase>
+
+
+		<phase name="label.control.menu.admin.kompetenztraeger" page="ctrl/admin/kompetenztraeger"
+			controller="kompetenztraegerController" />
+
+		<phase name="label.control.menu.admin.email" page="ctrl/admin/email"
+			controller="admCtrlEmailController" />
+
+	</phase>
+
+</application>

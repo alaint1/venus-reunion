@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:security="http://www.springframework.org/security/tags"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition>
+
+		<sr:helpLink
+			ref="Kaprios/Bearbeitung/Vorgangsinfo.htm#Vorgangsinfo_Vorgang" />
+
+		<h:panelGrid columns="2">
+
+			<h:panelGrid columns="2">
+				<sr:textField id="vnr_sonst" value="#{pc.value.id}" size="15"
+					disabled="true" label="Vorgangs-Nr." />
+
+				<sr:textField id="parentVorgang"
+					value="#{pc.value.parentVorgang.id}" size="15" disabled="true"
+					label="aufrufender Vorgang" />
+			</h:panelGrid>
+
+			<sr:comboboxField id="bearb_sonst" emptyItem="true"
+				value="#{pc.value.aufgabe.sachbearbeiter}"
+				items="#{userItemGenerator.all}" label="Aktueller Bearbeiter"
+				disabled="true" />
+
+			<sr:textField id="ast_sonst" value="#{pc.value.antragstellerName}"
+				size="60" label="Kunde" required="true" />
+
+			<sr:textField id="pers_sonst" value="#{pc.value.personenNr}"
+				size="10" label="Pers.-Nr." />
+
+		</h:panelGrid>
+
+		<sr:textAreaField id="anmerkungen_sonst"
+			value="#{pc.value.anmerkungen}" rows="8" label="Anmerkungen" />
+
+		<ui:include src="inc-uebernahme.xhtml" />
+
+	</ui:composition>
+
+</jsp:root>
+

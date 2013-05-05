@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition>
+
+		<sr:helpLink
+			ref="Kaprios/Bearbeitung/Vorgangsinfo.htm#Vorgangsinfo_Status" />
+
+
+		<c:if test="#{pc.bemerkungVorhanden}">
+			<t:div styleClass="warning">
+				<h:outputFormat value="#{pc.value.bemerkung}" />
+			</t:div>
+		</c:if>
+
+		<sr:dataTable value="#{pc.steps}" var="bean" id="data" rows="1000">
+			<t:column headerstyle="width:18px;">
+				<t:div rendered="#{bean.phase.rollenWechsel}">
+					<h:graphicImage rendered="#{!bean.done}" title="Rollenwechsel"
+						url="/weblets/icons/role_obj.gif" alt="" />
+					<h:graphicImage rendered="#{bean.done}" title="Rollenwechsel"
+						url="/weblets/icons/role_done.gif" alt="" />
+				</t:div>
+				<t:div rendered="#{bean.decision}">
+					<h:graphicImage rendered="#{!bean.done}" title="Entscheidung"
+						url="/weblets/icons/decision_enabled.gif" alt="" />
+					<h:graphicImage rendered="#{bean.done}" title="Entscheidung"
+						url="/weblets/icons/decision_enabled_done.gif" alt="" />
+				</t:div>
+				<t:div rendered="#{bean.referenz}">
+					<h:graphicImage rendered="#{!bean.done}" title="Prozessaufruf"
+						url="/weblets/icons/workflow.gif" alt="" />
+					<h:graphicImage rendered="#{bean.done}" title="Prozessaufruf"
+						url="/weblets/icons/workflow_done.gif" alt="" />
+				</t:div>
+				<t:div
+					rendered="#{!bean.phase.rollenWechsel and !bean.decision and !bean.referenz}">
+					<h:graphicImage rendered="#{bean.done}" title="Arbeitsschritt"
+						url="/weblets/icons/task.gif" alt="" />
+					<h:graphicImage rendered="#{!bean.done}" title="Arbeitsschritt"
+						url="/weblets/icons/task_todo.gif" alt="" />
+				</t:div>
+			</t:column>
+
+			<t:column>
+				<f:facet name="header">
+					<h:outputText value="Bearbeitungsschritt" />
+				</f:facet>
+				<h:outputText value="#{bean.name}" />
+				<h:panelGroup rendered="#{bean.decision}">
+
+					<h:panelGrid style="width:100%;">
+						<h:selectOneRadio value="#{bean.fall}"
+							disabled="#{workflow.readonly or pc.isStepDisabled(bean) or !controller.isWvFaellig()}"
+							converter="#{pc.converter(bean)}" layout="pageDirection">
+							<f:selectItems value="#{pc.items(bean)}" />
+							<a4j:support event="onclick" reRender="data"
+								action="#{pc.initSteps}" />
+						</h:selectOneRadio>
+						<t:div style="width:100%;">
+							<sr:comboboxMultiField id="multi_doku" reRender="data"
+								rendered="#{bean.fall != null  and bean.fall.ergebnisDoku and !workflow.readonly and !pc.isStepDisabled(bean)}"
+								value="#{bean.selectedControlResuts}" inputStyle="width:100%;"
+								size="6"
+								items="#{kontrollergebnisItemGenerator.getAll(bean.fall)}"
+								converter="#{kontrollergebnisItemGenerator.converterAll}">
+							</sr:comboboxMultiField>
+						</t:div>
+						<t:div style="width:100%;">
+							<sr:textAreaField readonly="true"
+								rendered="#{bean.fall != null and bean.fall.ergebnisDoku}"
+								value="#{bean.kontrollergebnisse}" rows="5" maxlength="1900" />
+						</t:div>
+					</h:panelGrid>
+				</h:panelGroup>
+
+				<h:panelGroup id="referenz_panel" rendered="#{bean.referenz}">
+					<sr:textAreaField id="referenz_bemerkung"
+						rendered="#{pc.isBemerkungAktiv(bean)}"
+						disabled="#{workflow.readonly or pc.isStepDisabled(bean) or !controller.isWvFaellig()}"
+						value="#{bean.bemerkung}" rows="5" maxlength="1900" />
+				</h:panelGroup>
+			</t:column>
+
+			<t:column headerstyle="width:300px;" style="text-align:center;">
+				<f:facet name="header">
+					<h:outputText value="Status" />
+				</f:facet>
+				<h:outputText
+					value="#{bean.statusChangedOn} &#160;&#160;&#160; #{bean.nameDesBearbeiters}"
+					rendered="#{bean.done}">
+					<sr:convertDateTime type="both" />
+				</h:outputText>
+			</t:column>
+
+			<t:column headerstyle="width:50px;">
+				<f:facet name="header">
+					<h:outputText value="Aktion" />
+				</f:facet>
+
+				<h:panelGrid style="width:100%" columns="2">
+					<t:div>
+						<h:commandLink id="done"
+							rendered="#{!workflow.readonly and bean.open and pc.isEditable(bean) and controller.isWvFaellig()}"
+							action="#{pc.complete(bean)}" title="Auf 'Erledigt' setzen">
+							<t:graphicImage alt="" url="/weblets/icons/testok.gif" />
+						</h:commandLink>
+						<t:graphicImage
+							rendered="#{workflow.readonly or !bean.open or !pc.isEditable(bean) or !controller.isWvFaellig()}"
+							alt="" url="/weblets/icons/dis_testok.gif" />
+					</t:div>
+					<t:div>
+						<h:commandLink id="back"
+							rendered="#{!workflow.readonly and pc.isUndoable(bean) and !bean.open and pc.isEditable(bean) and controller.isWvFaellig()}"
+							action="#{pc.undo(bean)}" title="Zurücksetzen">
+							<t:graphicImage alt="" url="/weblets/icons/undo_edit.gif" />
+						</h:commandLink>
+						<t:graphicImage
+							rendered="#{workflow.readonly or pc.isUndoable(bean) and (bean.open or !pc.isEditable(bean)) or !controller.isWvFaellig()}"
+							alt="" url="/weblets/icons/dis_undo_edit.gif" />
+					</t:div>
+				</h:panelGrid>
+			</t:column>
+		</sr:dataTable>
+
+	</ui:composition>
+
+</jsp:root>

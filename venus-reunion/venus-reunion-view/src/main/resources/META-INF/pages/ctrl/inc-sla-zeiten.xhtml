@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:security="http://www.springframework.org/security/tags"
+	xmlns:sr="http://subito.de/sunrise">
+
+	<ui:composition>
+
+		<c:set var="co" value="#{ctrlVorgangSlaMessungController}" />
+
+		<c:if
+			test="#{sr:module('AnzeigeSlaZeiten') and baseParameterHolder['ctrl.plausi.anzeigeSlaZeiten'].booleanValue}">
+
+			<t:div id="sla_messung" styleClass="quickMenu">
+
+				<h:panelGrid>
+
+					<h:outputText style="#{co.prozessStyle}" value="Prozessstart: " />
+					<h:outputText style="#{co.prozessStyle}"
+						value="#{co.prozessStartString}" />
+					<h:outputText style="#{co.prozessStyle}"
+						value="Abgelaufene Zeit seit Prozessstart: " />
+					<h:outputText style="#{co.prozessStyle}"
+						value="#{co.prozessLaufzeitString}" />
+					<h:outputText style="#{co.prozessStyle}" value="Prozessende: " />
+					<h:outputText style="#{co.prozessStyle}"
+						value="#{co.prozessEndeString}" />
+
+				</h:panelGrid>
+
+				<c:forEach items="#{co.listSlaMessung}" var="slaMessung"
+					varStatus="row">
+
+					<t:div styleClass="space-wide" />
+					<h:panelGrid>
+
+						<h:outputText style="#{co.getSlaStyle(slaMessung)}"
+							value="Start #{slaMessung.slaPhaseName} (#{co.getSlaDurchlaufzeitString(slaMessung)}): " />
+						<h:outputText style="#{co.getSlaStyle(slaMessung)}"
+							value="#{co.getSlaStartString(slaMessung)}" />
+						<h:outputText style="#{co.getSlaStyle(slaMessung)}"
+							value="Abgelaufene Zeit seit Start #{slaMessung.slaPhaseName}: " />
+						<h:outputText style="#{co.getSlaStyle(slaMessung)}"
+							value="#{co.getSlaLaufzeitString(slaMessung)}" />
+						<h:outputText style="#{co.getSlaStyle(slaMessung)}"
+							value="Ende #{slaMessung.slaPhaseName}: " />
+						<h:outputText style="#{co.getSlaStyle(slaMessung)}"
+							value="#{co.getSlaEndeString(slaMessung)}" />
+
+					</h:panelGrid>
+
+				</c:forEach>
+
+			</t:div>
+
+		</c:if>
+
+	</ui:composition>
+</jsp:root>
